@@ -20,6 +20,7 @@ class Service extends Model
         return [
             'tenant_id' => 'integer',
             'price' => 'decimal:2',
+            'estimated_hours' => 'integer',
             'is_active' => 'boolean',
         ];
     }

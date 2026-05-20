@@ -110,7 +110,7 @@ class OrderController extends Controller
                 'payment_method' => $request->payment_method,
                 'payment_status' => $request->payment_status,
                 'status' => 'antrian',
-                'estimated_done_at' => now()->addHours($maxEstimatedHours),
+                'estimated_done_at' => now()->addHours((int) $maxEstimatedHours),
                 'notes' => $request->notes,
             ]);
 
