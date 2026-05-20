@@ -117,6 +117,58 @@
                 </div>
             </div>
         </div>
+
+        {{-- Custom Modal for Input Quantity --}}
+        <div x-show="showQtyModal" 
+             class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm"
+             x-transition:enter="transition ease-out duration-300"
+             x-transition:enter-start="opacity-0"
+             x-transition:enter-end="opacity-100"
+             x-transition:leave="transition ease-in duration-200"
+             x-transition:leave-start="opacity-100"
+             x-transition:leave-end="opacity-0"
+             x-cloak>
+            <div class="bg-white dark:bg-slate-800 rounded-3xl p-6 max-w-sm w-full shadow-2xl border border-slate-100 dark:border-slate-700/50 space-y-4"
+                 @click.away="showQtyModal = false"
+                 x-transition:enter="transition ease-out duration-300 transform"
+                 x-transition:enter-start="scale-95 translate-y-4"
+                 x-transition:enter-end="scale-100 translate-y-0"
+                 x-transition:leave="transition ease-in duration-200 transform"
+                 x-transition:leave-start="scale-100 translate-y-0"
+                 x-transition:leave-end="scale-95 translate-y-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 rounded-2xl bg-sky-50 dark:bg-sky-900/20 flex items-center justify-center text-sky-500">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-lg text-slate-800 dark:text-white" x-text="currentServiceName"></h3>
+                        <p class="text-xs text-slate-400">Masukkan berat atau jumlah pesanan</p>
+                    </div>
+                </div>
+                
+                <div class="space-y-2">
+                    <label class="block text-sm font-semibold text-slate-500 dark:text-slate-400">Berat / Jumlah (<span x-text="currentServiceUnit"></span>)</label>
+                    <div class="relative flex items-center">
+                        <input type="number" 
+                               x-model="modalQty" 
+                               x-ref="qtyInput"
+                               @keydown.enter.prevent="confirmAddItem()"
+                               step="0.1" 
+                               min="0.1" 
+                               class="form-input text-2xl font-bold py-3 text-center pr-12 w-full focus:ring-2 focus:ring-sky-500 focus:border-sky-500 rounded-xl"
+                               placeholder="0.0">
+                        <span class="absolute right-4 font-bold text-slate-400" x-text="currentServiceUnit"></span>
+                    </div>
+                </div>
+                
+                <div class="flex gap-3 pt-2">
+                    <button type="button" @click="showQtyModal = false" class="btn-secondary flex-1 py-2.5 rounded-xl text-sm font-medium">Batal</button>
+                    <button type="button" @click="confirmAddItem()" class="btn-primary flex-1 py-2.5 rounded-xl text-sm font-medium">Tambahkan</button>
+                </div>
+            </div>
+        </div>
     </form>
 
     <script>
@@ -126,27 +178,54 @@
             paymentStatus: 'lunas',
             paidAmount: 0,
 
+            // Modal states
+            showQtyModal: false,
+            currentServiceId: null,
+            currentServiceName: '',
+            currentServicePrice: 0,
+            currentServiceUnit: '',
+            modalQty: '1',
+
             addItem(serviceId, name, price, unit) {
-                let defaultQty = 1;
+                this.currentServiceId = serviceId;
+                this.currentServiceName = name;
+                this.currentServicePrice = price;
+                this.currentServiceUnit = unit;
+
                 const existing = this.items.find(i => i.service_id === serviceId);
-                if (existing) {
-                    defaultQty = existing.quantity;
-                }
+                this.modalQty = existing ? existing.quantity.toString() : '1';
 
-                let qty = prompt(`Masukkan berat/jumlah (${unit}) untuk ${name}:`, defaultQty);
-                if (qty === null) return;
+                this.showQtyModal = true;
 
-                qty = parseFloat(qty.replace(',', '.'));
+                // Focus the input in the next tick
+                this.$nextTick(() => {
+                    this.$refs.qtyInput.focus();
+                    this.$refs.qtyInput.select();
+                });
+            },
+
+            confirmAddItem() {
+                let qtyStr = this.modalQty.toString();
+                let qty = parseFloat(qtyStr.replace(',', '.'));
                 if (isNaN(qty) || qty <= 0) {
                     alert('Jumlah tidak valid!');
                     return;
                 }
 
+                const existing = this.items.find(i => i.service_id === this.currentServiceId);
                 if (existing) {
                     existing.quantity = qty;
                 } else {
-                    this.items.push({ service_id: serviceId, name, price, unit, quantity: qty });
+                    this.items.push({ 
+                        service_id: this.currentServiceId, 
+                        name: this.currentServiceName, 
+                        price: this.currentServicePrice, 
+                        unit: this.currentServiceUnit, 
+                        quantity: qty 
+                    });
                 }
+
+                this.showQtyModal = false;
             },
 
             get grandTotal() {
