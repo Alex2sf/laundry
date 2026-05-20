@@ -121,6 +121,7 @@
         {{-- Custom Modal for Input Quantity --}}
         <div x-show="showQtyModal" 
              class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm"
+             style="position: fixed; inset: 0; z-index: 50; display: flex; align-items: center; justify-content: center; background-color: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px); padding: 1rem;"
              x-transition:enter="transition ease-out duration-300"
              x-transition:enter-start="opacity-0"
              x-transition:enter-end="opacity-100"
@@ -129,6 +130,7 @@
              x-transition:leave-end="opacity-0"
              x-cloak>
             <div class="bg-white dark:bg-slate-800 rounded-3xl p-6 max-w-sm w-full shadow-2xl border border-slate-100 dark:border-slate-700/50 space-y-4"
+                 style="max-width: 400px; width: 100%; border-radius: 1.5rem; background-color: #fff; margin: auto;"
                  @click.away="showQtyModal = false"
                  x-transition:enter="transition ease-out duration-300 transform"
                  x-transition:enter-start="scale-95 translate-y-4"
