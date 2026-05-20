@@ -43,6 +43,39 @@
         </a>
     </div>
 
+    {{-- Chart Section --}}
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+        {{-- Revenue & Order Chart --}}
+        <div class="glass-card p-6 lg:col-span-2">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="font-bold text-lg">Tren Pendapatan & Pesanan</h3>
+                <span class="text-xs text-slate-400">7 Hari Terakhir</span>
+            </div>
+            <div class="relative h-72">
+                <canvas id="revenueChart"></canvas>
+            </div>
+        </div>
+
+        {{-- Order Performance Cards --}}
+        <div class="glass-card p-6">
+            <h3 class="font-bold text-lg mb-4">Ringkasan Performa</h3>
+            <div class="space-y-4">
+                <div class="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800/50 rounded-xl">
+                    <span class="text-sm font-semibold text-slate-600 dark:text-slate-400">Rata-rata Order / Hari</span>
+                    <span class="text-base font-extrabold text-sky-500">{{ count($chartCount) > 0 ? round(array_sum($chartCount) / count($chartCount), 1) : 0 }}</span>
+                </div>
+                <div class="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800/50 rounded-xl">
+                    <span class="text-sm font-semibold text-slate-600 dark:text-slate-400">Total Pendapatan (7 Hari)</span>
+                    <span class="text-base font-extrabold text-emerald-500">Rp {{ number_format(array_sum($chartRevenue), 0, ',', '.') }}</span>
+                </div>
+                <div class="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800/50 rounded-xl">
+                    <span class="text-sm font-semibold text-slate-600 dark:text-slate-400">Total Transaksi (7 Hari)</span>
+                    <span class="text-base font-extrabold text-violet-500">{{ array_sum($chartCount) }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
     {{-- Recent Orders --}}
     <div class="glass-card overflow-hidden">
         <div class="p-4 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between">
@@ -70,4 +103,82 @@
             </table>
         </div>
     </div>
+
+    {{-- Chart Scripts --}}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const ctx = document.getElementById('revenueChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: {!! json_encode($chartLabels) !!},
+                    datasets: [
+                        {
+                            label: 'Pendapatan (Rp)',
+                            data: {!! json_encode($chartRevenue) !!},
+                            borderColor: '#0284c7',
+                            backgroundColor: 'rgba(2, 132, 199, 0.1)',
+                            borderWidth: 3,
+                            fill: true,
+                            tension: 0.4,
+                            yAxisID: 'y'
+                        },
+                        {
+                            label: 'Jumlah Order',
+                            data: {!! json_encode($chartCount) !!},
+                            borderColor: '#8b5cf6',
+                            backgroundColor: 'transparent',
+                            borderWidth: 2,
+                            borderDash: [5, 5],
+                            fill: false,
+                            tension: 0.1,
+                            yAxisID: 'y1'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                color: '#64748b',
+                                font: { family: 'Inter', weight: '600' }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: { display: false },
+                            ticks: { color: '#64748b' }
+                        },
+                        y: {
+                            type: 'linear',
+                            display: true,
+                            position: 'left',
+                            grid: { color: 'rgba(100, 116, 139, 0.1)' },
+                            ticks: {
+                                color: '#64748b',
+                                callback: function(value) {
+                                    return 'Rp ' + value.toLocaleString('id-ID');
+                                }
+                            }
+                        },
+                        y1: {
+                            type: 'linear',
+                            display: true,
+                            position: 'right',
+                            grid: { drawOnChartArea: false },
+                            ticks: {
+                                color: '#64748b',
+                                stepSize: 1
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
 </x-app-layout>

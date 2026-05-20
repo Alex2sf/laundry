@@ -36,9 +36,33 @@ class DashboardController extends Controller
             ->take(8)
             ->get();
 
+        // Chart Data (Last 7 Days)
+        $last7Days = collect(range(6, 0))->map(function($i) use ($today) {
+            return $today->copy()->subDays($i)->format('Y-m-d');
+        });
+
+        $dailyStats = Order::where('tenant_id', $tid)
+            ->where('created_at', '>=', today()->subDays(6))
+            ->selectRaw('DATE(created_at) as date, SUM(total) as revenue, COUNT(*) as count')
+            ->groupBy('date')
+            ->get()
+            ->keyBy('date');
+
+        $chartLabels = [];
+        $chartRevenue = [];
+        $chartCount = [];
+
+        foreach ($last7Days as $date) {
+            $formattedDate = \Carbon\Carbon::parse($date)->translatedFormat('d M');
+            $chartLabels[] = $formattedDate;
+            $chartRevenue[] = isset($dailyStats[$date]) ? (int) $dailyStats[$date]->revenue : 0;
+            $chartCount[] = isset($dailyStats[$date]) ? (int) $dailyStats[$date]->count : 0;
+        }
+
         return view('owner.dashboard', compact(
             'todayOrders', 'todayRevenue', 'pendingOrders', 'totalCustomers',
-            'monthRevenue', 'monthExpenses', 'unpaidOrders', 'recentOrders'
+            'monthRevenue', 'monthExpenses', 'unpaidOrders', 'recentOrders',
+            'chartLabels', 'chartRevenue', 'chartCount'
         ));
     }
 }
