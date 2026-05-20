@@ -15,6 +15,13 @@ class Customer extends Model
         'tenant_id', 'name', 'phone', 'address', 'notes',
     ];
 
+    protected function casts(): array
+    {
+        return [
+            'tenant_id' => 'integer',
+        ];
+    }
+
     public function tenant(): BelongsTo
     {
         return $this->belongsTo(Tenant::class);

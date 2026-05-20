@@ -41,7 +41,7 @@ class ServiceController extends Controller
 
     public function update(Request $request, Service $service)
     {
-        abort_if($service->tenant_id !== $this->tenantId(), 403);
+        abort_if((int) $service->tenant_id !== $this->tenantId(), 403);
 
         $request->validate([
             'name' => 'required|string|max:255',
@@ -58,14 +58,14 @@ class ServiceController extends Controller
 
     public function destroy(Service $service)
     {
-        abort_if($service->tenant_id !== $this->tenantId(), 403);
+        abort_if((int) $service->tenant_id !== $this->tenantId(), 403);
         $service->delete();
         return back()->with('success', 'Layanan berhasil dihapus!');
     }
 
     public function toggleActive(Service $service)
     {
-        abort_if($service->tenant_id !== $this->tenantId(), 403);
+        abort_if((int) $service->tenant_id !== $this->tenantId(), 403);
         $service->update(['is_active' => !$service->is_active]);
         return back()->with('success', 'Status layanan berhasil diubah!');
     }

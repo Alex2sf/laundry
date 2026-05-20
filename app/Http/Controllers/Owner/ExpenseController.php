@@ -55,7 +55,7 @@ class ExpenseController extends Controller
 
     public function destroy(Expense $expense)
     {
-        abort_if($expense->tenant_id !== $this->tenantId(), 403);
+        abort_if((int) $expense->tenant_id !== $this->tenantId(), 403);
         $expense->delete();
         return back()->with('success', 'Pengeluaran berhasil dihapus!');
     }

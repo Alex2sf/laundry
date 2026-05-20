@@ -78,7 +78,7 @@ class OrderController extends Controller
 
             foreach ($request->items as $item) {
                 $service = Service::findOrFail($item['service_id']);
-                abort_if($service->tenant_id !== $tid, 403);
+                abort_if((int) $service->tenant_id !== $tid, 403);
 
                 $itemSubtotal = $service->price * $item['quantity'];
                 $subtotal += $itemSubtotal;
@@ -125,14 +125,14 @@ class OrderController extends Controller
 
     public function show(Order $order)
     {
-        abort_if($order->tenant_id !== $this->tenantId(), 403);
+        abort_if((int) $order->tenant_id !== $this->tenantId(), 403);
         $order->load('items.service', 'customer', 'user');
         return view('owner.orders.show', compact('order'));
     }
 
     public function updateStatus(Request $request, Order $order)
     {
-        abort_if($order->tenant_id !== $this->tenantId(), 403);
+        abort_if((int) $order->tenant_id !== $this->tenantId(), 403);
 
         $request->validate([
             'status' => 'required|in:antrian,proses,selesai,diambil,batal',

@@ -18,6 +18,7 @@ class Service extends Model
     protected function casts(): array
     {
         return [
+            'tenant_id' => 'integer',
             'price' => 'decimal:2',
             'is_active' => 'boolean',
         ];

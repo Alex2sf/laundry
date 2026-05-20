@@ -21,6 +21,7 @@ class Order extends Model
     protected function casts(): array
     {
         return [
+            'tenant_id' => 'integer',
             'subtotal' => 'decimal:2',
             'discount_amount' => 'decimal:2',
             'tax_amount' => 'decimal:2',

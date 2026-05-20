@@ -47,7 +47,7 @@ class CustomerController extends Controller
 
     public function update(Request $request, Customer $customer)
     {
-        abort_if($customer->tenant_id !== $this->tenantId(), 403);
+        abort_if((int) $customer->tenant_id !== $this->tenantId(), 403);
 
         $request->validate([
             'name' => 'required|string|max:255',
@@ -61,7 +61,7 @@ class CustomerController extends Controller
 
     public function destroy(Customer $customer)
     {
-        abort_if($customer->tenant_id !== $this->tenantId(), 403);
+        abort_if((int) $customer->tenant_id !== $this->tenantId(), 403);
         $customer->delete();
         return back()->with('success', 'Pelanggan berhasil dihapus!');
     }

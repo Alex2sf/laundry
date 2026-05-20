@@ -18,6 +18,7 @@ class Expense extends Model
     protected function casts(): array
     {
         return [
+            'tenant_id' => 'integer',
             'amount' => 'decimal:2',
             'expense_date' => 'date',
         ];
