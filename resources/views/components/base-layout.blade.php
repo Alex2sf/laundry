@@ -6,6 +6,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ $title ?? 'LaundryPOS' }} - Sistem Manajemen Laundry</title>
     <meta name="description" content="Sistem POS & Manajemen Laundry Modern Multi-Tenant">
+    <link rel="icon" type="image/png" href="{{ asset('logo.png') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
