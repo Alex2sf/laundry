@@ -118,7 +118,7 @@ class OrderController extends Controller
                 $order->items()->create($itemData);
             }
 
-            return redirect()->route('owner.orders.show', $order)
+            return redirect()->route('owner.orders.index')
                 ->with('success', 'Order berhasil dibuat! Invoice: ' . $order->invoice_number);
         });
     }

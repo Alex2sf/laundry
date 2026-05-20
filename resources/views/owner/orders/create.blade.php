@@ -127,11 +127,25 @@
             paidAmount: 0,
 
             addItem(serviceId, name, price, unit) {
+                let defaultQty = 1;
                 const existing = this.items.find(i => i.service_id === serviceId);
                 if (existing) {
-                    existing.quantity += 1;
+                    defaultQty = existing.quantity;
+                }
+
+                let qty = prompt(`Masukkan berat/jumlah (${unit}) untuk ${name}:`, defaultQty);
+                if (qty === null) return;
+
+                qty = parseFloat(qty.replace(',', '.'));
+                if (isNaN(qty) || qty <= 0) {
+                    alert('Jumlah tidak valid!');
+                    return;
+                }
+
+                if (existing) {
+                    existing.quantity = qty;
                 } else {
-                    this.items.push({ service_id: serviceId, name, price, unit, quantity: 1 });
+                    this.items.push({ service_id: serviceId, name, price, unit, quantity: qty });
                 }
             },
 
