@@ -4,7 +4,7 @@
     <x-slot:subtitle>Ringkasan bisnis laundry Anda hari ini</x-slot:subtitle>
 
     {{-- Stats Row 1 --}}
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+    <div id="tour-stats-row" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         <x-stat-card title="Order Hari Ini" :value="$todayOrders" from="#0ea5e9" to="#06b6d4"
             icon='<svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>' />
         <x-stat-card title="Pendapatan Hari Ini" value="Rp {{ number_format($todayRevenue, 0, ',', '.') }}" from="#10b981" to="#059669"
@@ -16,7 +16,7 @@
     </div>
 
     {{-- Stats Row 2: Financial --}}
-    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+    <div id="tour-financial-stats" class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
         <div class="glass-card p-5">
             <p class="text-sm text-slate-400 mb-1">💰 Pendapatan Bulan Ini</p>
             <p class="text-2xl font-extrabold text-gradient">Rp {{ number_format($monthRevenue, 0, ',', '.') }}</p>
@@ -32,7 +32,7 @@
     </div>
 
     {{-- Quick Actions --}}
-    <div class="flex flex-wrap gap-3 mb-8">
+    <div id="tour-quick-actions" class="flex flex-wrap gap-3 mb-8">
         <a href="{{ route('owner.orders.create') }}" class="btn-primary">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
             Buat Order Baru
@@ -44,7 +44,7 @@
     </div>
 
     {{-- Chart Section --}}
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+    <div id="tour-chart-section" class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
         {{-- Revenue & Order Chart --}}
         <div class="glass-card p-6 lg:col-span-2">
             <div class="flex items-center justify-between mb-4">
@@ -77,7 +77,7 @@
     </div>
 
     {{-- Recent Orders --}}
-    <div class="glass-card overflow-hidden">
+    <div id="tour-recent-orders" class="glass-card overflow-hidden">
         <div class="p-4 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between">
             <h3 class="font-bold text-lg">Order Terbaru</h3>
             <a href="{{ route('owner.orders.index') }}" class="text-sm text-sky-500 hover:text-sky-600 font-semibold">Lihat Semua →</a>
@@ -181,4 +181,91 @@
             });
         });
     </script>
+
+    {{-- Onboarding Tour --}}
+    @php
+    $tourSteps = [
+        [
+            'target' => '#tour-stats-row',
+            'title' => '📊 Statistik Harian',
+            'description' => 'Di sini kamu bisa melihat ringkasan bisnis laundry hari ini: jumlah order masuk, pendapatan, pesanan yang sedang diproses, dan total pelanggan terdaftar.',
+            'icon' => '📊',
+            'iconBg' => 'linear-gradient(135deg, #0ea5e9, #06b6d4)',
+            'position' => 'bottom'
+        ],
+        [
+            'target' => '#tour-financial-stats',
+            'title' => '💰 Ringkasan Keuangan Bulanan',
+            'description' => 'Pantau kesehatan keuangan bisnismu! Lihat total pendapatan bulan ini, pengeluaran operasional, dan berapa order yang belum dilunasi pelanggan.',
+            'icon' => '💰',
+            'iconBg' => 'linear-gradient(135deg, #10b981, #059669)',
+            'position' => 'bottom'
+        ],
+        [
+            'target' => '#tour-quick-actions',
+            'title' => '⚡ Aksi Cepat',
+            'description' => 'Tombol pintasan untuk langsung membuat order baru atau melihat semua daftar order. Satu klik langsung kerja!',
+            'icon' => '⚡',
+            'iconBg' => 'linear-gradient(135deg, #f59e0b, #d97706)',
+            'position' => 'bottom'
+        ],
+        [
+            'target' => '#tour-chart-section',
+            'title' => '📈 Grafik Tren & Performa',
+            'description' => 'Grafik interaktif menampilkan tren pendapatan dan jumlah pesanan 7 hari terakhir. Di sampingnya ada ringkasan performa rata-rata order per hari.',
+            'icon' => '📈',
+            'iconBg' => 'linear-gradient(135deg, #8b5cf6, #7c3aed)',
+            'position' => 'bottom'
+        ],
+        [
+            'target' => '#tour-recent-orders',
+            'title' => '🧺 Order Terbaru',
+            'description' => 'Tabel ini menampilkan order-order terbaru lengkap dengan status pembayaran dan status pengerjaan. Klik Detail untuk melihat rincian setiap order.',
+            'icon' => '🧺',
+            'iconBg' => 'linear-gradient(135deg, #06b6d4, #0891b2)',
+            'position' => 'top'
+        ],
+        [
+            'target' => '#sidebar-order-baru',
+            'title' => '➕ Buat Order Baru',
+            'description' => 'Klik menu ini untuk membuat pesanan baru. Pilih pelanggan, pilih layanan, atur jumlah, dan langsung proses! Mudah banget.',
+            'icon' => '➕',
+            'iconBg' => 'linear-gradient(135deg, #10b981, #059669)',
+            'position' => 'right'
+        ],
+        [
+            'target' => '#sidebar-daftar-order',
+            'title' => '📋 Daftar Order',
+            'description' => 'Lihat semua order di sini. Kamu bisa filter berdasarkan tanggal, status pengerjaan, dan status pembayaran. Bisa juga export ke CSV!',
+            'icon' => '📋',
+            'iconBg' => 'linear-gradient(135deg, #3b82f6, #2563eb)',
+            'position' => 'right'
+        ],
+        [
+            'target' => '#sidebar-layanan',
+            'title' => '🧴 Layanan & Harga',
+            'description' => 'Atur jenis layanan laundry kamu di sini: cuci setrika, cuci kering, dll. Bisa set harga per kg atau per pcs, dan pilih kecepatan reguler/kilat/express.',
+            'icon' => '🧴',
+            'iconBg' => 'linear-gradient(135deg, #ec4899, #db2777)',
+            'position' => 'right'
+        ],
+        [
+            'target' => '#sidebar-pelanggan',
+            'title' => '👥 Data Pelanggan',
+            'description' => 'Kelola data pelanggan tetap kamu: nama, no. HP, alamat. Data pelanggan yang tersimpan akan mempercepat proses pembuatan order.',
+            'icon' => '👥',
+            'iconBg' => 'linear-gradient(135deg, #8b5cf6, #7c3aed)',
+            'position' => 'right'
+        ],
+        [
+            'target' => '#sidebar-pengeluaran',
+            'title' => '💸 Pengeluaran',
+            'description' => 'Catat semua pengeluaran operasional harian: beli deterjen, listrik, gaji karyawan, dll. Semua tercatat rapi untuk laporan keuangan!',
+            'icon' => '💸',
+            'iconBg' => 'linear-gradient(135deg, #ef4444, #dc2626)',
+            'position' => 'right'
+        ],
+    ];
+    @endphp
+    <x-onboarding-tour tour-id="owner-dashboard" :auto-start="true" :steps="$tourSteps" />
 </x-app-layout>
